@@ -1,0 +1,38 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SpawnerControl : MonoBehaviour
+{
+    public GameObject[] SpawningAssets; //This is where we add our game objects that we want to spawn.
+    private float spawnrate; // This is a variable that will hold our random number; this adds randomless to our spawning. 
+    private float timer; // We will be counting down from the random number when timer reaches zero we spawn. 
+    private int randomNumber; // This is a int that hold a random asset to spawn from the GameOject Array.
+
+    private void Start() // At the start this spawns (only spawns one time).
+    {
+        Spawn(); // We start the game by calling the Spawn method. 
+    }
+
+    private void Update() // This calls every frame
+    {
+        timer -= Time.deltaTime; // Since we are in update every computer has differnt frames, this uses deltatime so that the count down is the same.
+        if (timer <=0) // We use an if statement to count down to spawn. 
+        {
+            Spawn();
+        }
+       
+         
+        
+    }
+
+    void Spawn() // Our method to spawn. 
+    {
+        spawnrate = Random.Range(3, 8); //We first set the spawnrate (for the next spawning).
+        timer = spawnrate; // We set the timer with the spawn rate. 
+        randomNumber = Random.Range(0, SpawningAssets.Length); // We pick a random number with the Length of the Array(we dont need to use -1 after Length)
+        Instantiate(SpawningAssets[randomNumber], transform.position, Quaternion.identity); //This is the function that spawns an object from the location of the spawner. The transform.position is the position of the SPAWNER, not the spawned. 
+        
+
+    }
+}
