@@ -1,0 +1,31 @@
+sing System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class GameOverMenu : MonoBehaviour
+{
+    public Text ScoreText;
+    public Text HighScore;
+    // Start is called before the first frame update
+    void Start()
+    {
+        gameObject.SetActive(false);
+        HighScore.text = (PlayerPrefs.GetInt("HighScore", 0).ToString());
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+    public void EndGameScore(int number)
+    {
+        ScoreText.text = number.ToString("0");
+        if (number > PlayerPrefs.GetInt("HighScore", 0))
+        {
+            PlayerPrefs.SetInt("HighScore", number);
+            HighScore.text = number.ToString();
+        }
+        
+    }
