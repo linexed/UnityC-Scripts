@@ -1,0 +1,77 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerControl : MonoBehaviour
+{
+    public float speed;
+    Rigidbody2D rb;
+    float HorizontalMove = 0f;
+    float VerticalMove = 0f;
+    private bool playermovement = true;
+
+   
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        rb = GetComponent<Rigidbody2D> ();
+        
+    }
+
+    void Update()
+    {
+        
+        HorizontalMove = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
+        VerticalMove = Input.GetAxis("Vertical") * speed * Time.deltaTime;
+        //This if statement nested loop works to add areas the player cannot travel. 
+        if (transform.position.x <= -20f || transform.position.x >= 20f || transform.position.y >= 46f || transform.position.y <= -10f)
+        {
+            playermovement = false;
+            if (transform.position.x <= -20f)
+            {
+                if (Input.GetKey("right")) //may need to add something for "d" if porting to pc. (mobile will be different)
+                {
+                    playermovement = true;
+                   
+
+                }
+            }
+            if (transform.position.x >= 20f)
+            {
+                if (Input.GetKey("left")) //may need to add something for "a" if porting to pc. (mobile will be different)
+                {
+                    playermovement = true;
+                    
+                    
+                }
+            }
+            if (transform.position.y >= 46f)
+            {
+                if (Input.GetKey("down")) //may need to add something for "s" if porting to pc. (mobile will be different)
+                {
+                    playermovement = true;
+                    
+                }
+            }
+            if (transform.position.y <= -10f)
+            {
+                if (Input.GetKey("up")) //may need to add something for "w" if porting to pc. (mobile will be different)
+                {
+                    playermovement = true;
+                }
+            }
+        }
+    }
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        if (playermovement == true)
+
+        {
+            transform.position = new Vector2(transform.position.x + HorizontalMove, transform.position.y + VerticalMove);
+        }
+    }
+    
+}
+
