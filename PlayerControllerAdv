@@ -1,0 +1,249 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+//need to use this for Text Mesh Pro usage
+using TMPro;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
+
+
+
+//Many issues
+//You will have to use List<string> to compare what you already used, to what is left. (currently you can use two of the same keys in order to open the door
+//It is clear that a GameMananger is Needed. To keep track of many scenes (and coversations)
+
+
+public class Player : MonoBehaviour
+{
+    public GameObject[] Item;
+    public string[] PlayerTalking;
+    Rigidbody2D rb;
+    [SerializeField]
+    public float speed;
+    //Below is UI elements
+    public float displayTime = 5.0f;
+    public GameObject dialogBox;
+    private float timerDisplay;
+    public TextMeshProUGUI text;
+    public MainFrame mainFrame;
+    private bool TalkWithRobot = true;
+    public int LevelOfTalk;
+    private int TalkingRounds =0;
+    public GameObject UIKeyImage;
+    public KeyPadHoles KeysForEnter;
+    //private List<string> keys;
+    public GameObject BlockedDoor;
+    private bool _DoorOpen = false;
+    public GameManager game;
+    //public List<string> CurrentKeyIn;
+    public bool lastLevel;
+    public AudioClip keypickUp;
+    public AudioSource PlayerSound;
+    public AudioClip KeypadNo;
+    public AudioClip KeyPadYes;
+    public Canvas endingscene;
+    public List<string> KeysForKeypad;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+        dialogBox.SetActive(false);
+        timerDisplay = -1.0f;
+        
+        rb = GetComponent<Rigidbody2D>();
+        game = GetComponent<GameManager>();
+        StartCoroutine("TalkingPause");
+        
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+
+        Vector2 move = new Vector2(horizontal, vertical);
+        if (move.x == -1f)
+        {
+            this.gameObject.GetComponent<SpriteRenderer>().flipX = true;
+            
+        }
+        if (move.x == 1f)
+        {
+            this.gameObject.GetComponent<SpriteRenderer>().flipX = false;
+        }
+        
+
+
+        this.gameObject.transform.position = new Vector2(transform.position.x + (horizontal * speed), transform.position.y + (vertical * speed));
+        
+
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            //drops item in hand
+        }
+
+        
+        
+
+        
+    }
+
+    
+
+
+    private void OnCollisionStay2D(Collision2D target)
+    {
+        //Debug.Log(target);
+        if (TalkWithRobot == true)
+        {
+            //Debug.Log("You triggered");
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                TalkWithRobot = false;
+                if (target.collider.tag == "MainFrame")
+                {
+                   // Debug.Log("You found tag");
+                    mainFrame.MainFrameChat();
+
+
+
+
+                }
+
+            }
+            
+            
+
+        }
+
+        if (target.collider.tag == "ExitDoor")
+        {
+            Debug.Log("Door Colide");
+            if( _DoorOpen == true)
+            {
+                if (lastLevel == true)
+                {
+                    endingscene.gameObject.SetActive(true);
+                }
+                else
+                {
+                    Debug.Log("Ending Level");
+                    GameManager.timer = 0f;
+
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+                }
+                
+            }
+        }
+
+        if (target.collider.tag == "Enemy")
+        {
+            GameManager.timer = 0f;
+            SceneManager.LoadScene(0);
+        }
+        
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        
+        Collider2D CurrentKey;
+        //Debug.Log(collision.name);
+        if (collision.tag == "Key")
+        {
+            CurrentKey = collision;
+            Debug.Log("Key Targeted");
+            PlayerSound.PlayOneShot(keypickUp); 
+            UIKeyImage.GetComponent<Image>().sprite = collision.GetComponent<SpriteRenderer>().sprite;
+            UIKeyImage.GetComponent<Image>().color = new Color(255, 255, 255, 255);
+            Destroy(collision.gameObject);
+
+
+
+        }
+        if (collision.tag == "KeyPad")
+        {
+            
+            //Debug.Log("KeyPad Trigger");
+            foreach (var key in KeysForEnter.KeyNames)
+            {
+                Debug.Log(key);
+                if (key == UIKeyImage.GetComponent<Image>().sprite.name + "(Clone)" && KeysForKeypad.Contains(key))
+                {
+                    Debug.Log("Key Found");
+                    KeysForEnter.KeyHoles--;
+                    //CurrentKeyIn.Add(key);
+                    KeysForKeypad.Remove(key);
+                    Debug.Log("Added Key");
+                    PlayerSound.PlayOneShot(KeyPadYes);
+                    UIKeyImage.GetComponent<Image>().sprite = null;
+                    UIKeyImage.GetComponent<Image>().color = new Color(255, 255, 255, 0);
+                    
+                }
+                if (KeysForEnter.KeyHoles <= 0)
+                {
+                    Destroy(BlockedDoor.gameObject);
+                    _DoorOpen = true;
+                    
+
+                }
+                
+
+                
+            }
+
+            PlayerSound.PlayOneShot(KeypadNo);
+
+
+
+
+
+
+
+        }
+        
+     
+        
+         
+        
+
+        
+
+    }
+    //Use this to adjust the timing of the conversations.
+    public IEnumerator TalkingPause()
+    {
+        yield return new WaitForSeconds(6f);
+        GameManager.CurrentDialog++;
+        Debug.Log("Display Player Dialog");
+        timerDisplay = displayTime;
+        dialogBox.SetActive(true);
+        text.text = PlayerTalking[LevelOfTalk];
+        yield return new WaitForSeconds(3f);
+        LevelOfTalk++;
+        dialogBox.SetActive(false);
+        yield return new WaitForSeconds(10f);
+        dialogBox.SetActive(true);
+        text.text = PlayerTalking[LevelOfTalk];
+        yield return new WaitForSeconds(3f);
+        dialogBox.SetActive(false);
+ 
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+}
