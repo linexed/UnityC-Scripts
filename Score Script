@@ -1,0 +1,61 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+
+
+
+public class Score : MonoBehaviour
+{//The purpose of this script is to display 1 on the score board (simulating rising by 1 feet), when the player is still, moving left and moving right. 
+ // The score will rise when the player is moving up and decrease when the score is moving down. 
+ // This script is working for PC. (need to update it for mobile)
+    public Text scoreText;
+    public Transform player;
+    private bool timestop = true;
+    public float timetracker = 0;
+    public GameOverMenu GameOverMenu;
+    private int convert;
+    
+
+    private void Update()
+    {
+       
+        
+
+        if (timestop == true)
+        {
+            timetracker += 5 * Time.deltaTime;
+
+            scoreText.text = timetracker.ToString("0");
+        }
+       
+        if (Input.GetKey("down"))
+        {
+            timestop = false;
+            timetracker -= 2 * Time.deltaTime;
+            scoreText.text = timetracker.ToString("0");
+            timestop = true;
+            
+        }
+        if ((Input.GetKey("left")) || (Input.GetKey("right")))
+        {
+            timestop = true;
+        }
+        if (Input.GetKey("up"))
+        {   
+            timetracker += 9 * Time.deltaTime;
+        }
+        if (player.GetComponent<TriggerEvent>().PlayerLifes <= 0f)
+        {
+            convert = (int)timetracker;
+            GameOverMenu.EndGameScore(convert);
+            timestop = false;
+
+        }
+       
+
+
+    }
+    
+}
