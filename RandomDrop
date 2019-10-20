@@ -1,0 +1,62 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+//This may not do anything. 
+public class Keys
+{
+    public string Name;
+    public int ItemID;
+    public Color color;
+
+    public Keys()
+    {
+        Debug.Log("Class Items");
+        //does anything need to go in here?
+    }
+
+
+}
+public class KeyPadFunction : MonoBehaviour
+{
+    public GameObject[] Keys;
+    private int KeyIndex;
+    private float timerDisplay = 5f;
+ 
+
+
+    // Start is called before the first frame update
+    void Start()
+    {
+       
+       
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (timerDisplay >= 0)
+        {
+            timerDisplay -= Time.deltaTime;
+            if (timerDisplay < 0)
+            {
+
+                RandomDrop();
+            }
+        }
+
+
+
+    }
+
+    private void RandomDrop()
+    {
+        KeyIndex = Random.Range(0, Keys.Length);
+        timerDisplay = Random.Range(5, 15);
+        Instantiate(Keys[KeyIndex], transform.position, Quaternion.identity);
+
+    }
+
+    
+    
+}
