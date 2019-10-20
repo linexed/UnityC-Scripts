@@ -1,0 +1,34 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+///use advanced (RequireComponant) for this script.
+///This multilayered RequireComponent works in adding components to the game object. 
+
+
+[RequireComponent(typeof(Rigidbody2D),typeof (AudioSource), typeof(BoxCollider2D))]
+public class PlayerController : MonoBehaviour
+{
+    //Adding slider to the speed variable. To adjust the speed in the inspector. 
+    [Range(1, 5)]
+    public int speed;
+    
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        //I wanted to try out a Vector3 approach to a Vector2 Sprite image. It seems to have the same effect. 
+        var horizontal = Input.GetAxis("Horizontal");
+        var vertival = Input.GetAxis("Vertical");
+        transform.Translate((horizontal * speed * Time.deltaTime), (vertival * speed * Time.deltaTime), 0);
+
+        
+        
+    }
+}
